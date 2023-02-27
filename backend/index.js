@@ -2,8 +2,9 @@ import express from "express";
 import cors from "cors";
 import session from "express-session";
 import dotenv from "dotenv";
+import SequelizeStore from "connect-session-sequelize";
 //import sync modal
-// import db from "./config/db.js";
+import db from "./config/db.js";
 
 //import routes
 import PostRoute from "./routes/postRoute.js";
@@ -17,17 +18,25 @@ dotenv.config();
 
 const app = express();
 
-//sync database
+const sessionStore = SequelizeStore(session.Store);
+
+// session ke database
+const store = new sessionStore({
+  db: db,
+});
+
+// sync database
 // (async () => {
 //   await db.sync();
 // })();
 
-//mendefinisi session
+//Middleware session untuk tracking pengguna website
 app.use(
   session({
     secret: process.env.SESS_SECRET,
     resave: false,
     saveUninitialized: true,
+    store: store,
     cookie: {
       secure: "auto",
     },
@@ -50,6 +59,9 @@ app.use(RolesRoute);
 app.use(ForumRoute);
 app.use(PostRoute);
 app.use(CommentRoute);
+
+//sync store session dengan database
+// store.sync();
 
 app.listen(process.env.APP_PORT, () => {
   console.log("Server berjalan");

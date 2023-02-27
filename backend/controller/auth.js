@@ -9,36 +9,49 @@ export const login = async (req, res) => {
       email: req.body.email,
     },
   });
-  if (!user) return res.status(404).json({ msg: "User Tidak Ditemukan" });
+  //Jika user tidak ada
+  if (!user) {
+    return res.status(404).json({ msg: "User Tidak Ditemukan" });
+  }
   const match = await argon2.verify(user.password, req.body.password);
-  if (!match) return res.status(400).json({ msg: "Password Salah!" });
-  req.session.userId = user.userId;
-  const userId = user.userId;
+  //Jika password dan confirm password tidak cocok
+  if (!match) {
+    return res.status(400).json({ msg: "Password Salah!" });
+  }
+  //request session berdasarkan uuid
+  req.session.uuid = user.uuid;
+  const uuid = user.uuid;
   const name = user.name;
   const email = user.email;
   const roleId = user.roleId;
-  res.status(200).json({ userId, name, email, roleId });
+  res.status(200).json({ uuid, name, email, roleId });
 };
 
-//Membuat fungsi get user login
+//Membuat fungsi get user yang sedang login
 export const userLogin = async (req, res) => {
-  if (!req.session.userId) {
-    return res.status(401).json({ msg: "Mohon Login Ke Akun Anda" });
+  //Validasi JIka Session User tidak ada
+  if (!req.session.uuid) {
+    return res.status(401).json({ msg: "Mohon Untuk Login Terlebih Dahulu" });
   }
   const user = await Users.findOne({
-    attributes: ["userId", "name", "email", "roleId"],
+    attributes: ["uuid", "name", "email", "roleId"],
     where: {
-      userId: req.session.userId,
+      uuid: req.session.uuid,
     },
   });
-  if (!user) return res.status(404).json({ msg: "User Tidak Ditemukan" });
+  //Validasi jika user tidak ada
+  if (!user) {
+    return res.status(404).json({ msg: "User Tidak Ditemukan" });
+  }
   res.status(200).json(user);
 };
 
 // membuat fungsi logout
 export const logout = async (req, res) => {
   req.session.destroy((err) => {
-    if (err) return res.status(400).json({ msg: "Logout Gagal" });
+    if (err) {
+      return res.status(400).json({ msg: "Logout Gagal" });
+    }
     res.status(200).json({ msg: "Logout Berhasil" });
   });
 };

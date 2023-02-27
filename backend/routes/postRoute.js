@@ -6,15 +6,20 @@ import {
   createPost,
   updatePost,
   deletePost,
+  getPostByForumId,
 } from "../controller/post.js";
+//import middleware verifyUser agar hanya yang sudah login bisa akses
+//import middleware adminOnly agar hanya admin yang bisa akses
+import { verifyUser, adminOnly } from "../middleware/AuthUser.js";
 
 const PostRoute = express.Router();
 
 // membuat router
-PostRoute.get("/post", getPost);
-PostRoute.get("/post/:id", getPostById);
-PostRoute.post("/post", createPost);
-PostRoute.patch("/post/:id", updatePost);
-PostRoute.delete("/post/:id", deletePost);
+PostRoute.get("/", getPost);
+PostRoute.get("/forum/:id/post", getPostByForumId);
+PostRoute.get("/forum/:idForum/post/:id", getPostById);
+PostRoute.post("/post", verifyUser, createPost);
+PostRoute.patch("/post/:id", verifyUser, updatePost);
+PostRoute.delete("/post/:id", verifyUser, deletePost);
 
 export default PostRoute;

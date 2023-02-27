@@ -49,3 +49,6 @@ Content-Type: application/json
   "email": "rizkiramadhan350@gmail.com",
   "password": "123456",
 }
+
+## Get User Login
+GET http://localhost:3000/userLogin

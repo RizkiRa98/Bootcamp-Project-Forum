@@ -6,7 +6,7 @@ export const getUser = async (req, res) => {
   try {
     const response = await Users.findAll({
       //atribut yang ingin di tampilkan
-      attributes: ["userId", "userName", "name", "email", "roleId", "gender"],
+      attributes: ["uuid", "userName", "name", "email", "roleId", "gender"],
     });
     res.status(200).json(response);
   } catch (error) {
@@ -19,9 +19,9 @@ export const getUserById = async (req, res) => {
   try {
     const response = await Users.findOne({
       //atribut yang ingin di tampilkan
-      attributes: ["userId", "userName", "name", "email", "roleId", "gender"],
+      attributes: ["uuid", "userName", "name", "email", "roleId", "gender"],
       where: {
-        userId: req.params.id,
+        uuid: req.params.id,
       },
     });
     res.status(200).json(response);
@@ -72,11 +72,13 @@ export const createUser = async (req, res) => {
 export const updateUser = async (req, res) => {
   const user = await Users.findOne({
     where: {
-      userId: req.params.id,
+      uuid: req.params.id,
     },
   });
   // validasi jika user tidak ditemukan
-  if (!user) return res.status(404).json({ msg: "User Tidak Ada" });
+  if (!user) {
+    return res.status(404).json({ msg: "User Tidak Ada" });
+  }
   const {
     username,
     name,
@@ -113,11 +115,11 @@ export const updateUser = async (req, res) => {
         foto: foto,
       },
       {
-        where: { userId: user.userId },
+        where: { uuid: user.uuid },
       }
     );
-    //respon status created
-    res.status(200).json({ msg: "Data Berhasil Di Update" });
+    //respon status updated
+    res.status(200).json({ msg: "Data User Berhasil Di Update" });
   } catch (error) {
     res.status(400).json({ msg: error.message });
   }
@@ -127,18 +129,20 @@ export const updateUser = async (req, res) => {
 export const deleteUser = async (req, res) => {
   const user = await Users.findOne({
     where: {
-      userId: req.params.id,
+      uuid: req.params.id,
     },
   });
   // validasi jika user tidak ditemukan
-  if (!user) return res.status(404).json({ msg: "User Tidak Ada" });
+  if (!user) {
+    return res.status(404).json({ msg: "User Tidak Ada" });
+  }
 
-  //update data
+  //delete data
   try {
     await Users.destroy({
-      where: { userId: user.userId },
+      where: { uuid: user.uuid },
     });
-    //respon status created
+    //respon status deleted
     res.status(200).json({ msg: "Data User Berhasil Dihapus" });
   } catch (error) {
     res.status(400).json({ msg: error.message });

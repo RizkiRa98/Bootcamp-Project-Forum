@@ -8,9 +8,8 @@ const { DataTypes } = Sequelize;
 const Users = db.define(
   "users",
   {
-    userId: {
+    uuid: {
       type: DataTypes.STRING,
-      primaryKey: true,
       defaultValue: DataTypes.UUIDV4,
       allowNull: false,
       validate: {
@@ -71,7 +70,7 @@ const Users = db.define(
     },
     foto: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
   },
   { freezeTableName: true }

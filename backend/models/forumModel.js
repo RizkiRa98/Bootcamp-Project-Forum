@@ -7,9 +7,8 @@ const { DataTypes } = Sequelize;
 const Forum = db.define(
   "forum",
   {
-    forumId: {
+    uuid: {
       type: DataTypes.STRING,
-      primaryKey: true,
       defaultValue: DataTypes.UUIDV4,
       allowNull: false,
       validate: {

@@ -10,9 +10,8 @@ const { DataTypes } = Sequelize;
 const Post = db.define(
   "post",
   {
-    postID: {
+    uuid: {
       type: DataTypes.STRING,
-      primaryKey: true,
       defaultValue: DataTypes.UUIDV4,
       allowNull: false,
       validate: {
@@ -42,14 +41,14 @@ const Post = db.define(
       },
     },
     userId: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false,
       validate: {
         notEmpty: true,
       },
     },
     forumId: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false,
       validate: {
         notEmpty: true,
@@ -69,6 +68,7 @@ const Post = db.define(
 //menghubungkan tabel forum dan post
 Forum.hasMany(Post);
 Post.belongsTo(Forum, { foreignKey: "forumId" });
+
 //Menghubungkan tabel user dan post
 Users.hasMany(Post);
 Post.belongsTo(Users, { foreignKey: "userId" });

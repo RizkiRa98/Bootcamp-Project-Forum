@@ -5,7 +5,7 @@ export const getForum = async (req, res) => {
   try {
     const response = await Forum.findAll({
       //Atribut yang ingin ditampilkan
-      attributes: ["uuid", "namaForum", "detail", "created_date", "icon"],
+      attributes: ["id", "uuid", "namaForum", "detail", "createdAt", "icon"],
     });
     res.status(200).json(response);
   } catch (error) {
@@ -18,7 +18,7 @@ export const getForumByName = async (req, res) => {
   try {
     const response = await Forum.findOne({
       //Atribut yang ingin ditampilkan
-      attributes: ["uuid", "namaForum", "detail", "created_date", "icon"],
+      attributes: ["uuid", "namaForum", "detail", "createdAt", "icon"],
       where: {
         namaForum: req.params.id,
       },
@@ -31,12 +31,11 @@ export const getForumByName = async (req, res) => {
 
 //fungsi create forum
 export const createForum = async (req, res) => {
-  const { namaForum, detail, created_date, icon } = req.body;
+  const { namaForum, detailt, icon } = req.body;
   try {
     await Forum.create({
       namaForum: namaForum,
       detail: detail,
-      created_date: created_date,
       icon: icon,
     });
     res.status(201).json({ msg: "Forum Berhasil Dibuat" });
@@ -56,13 +55,12 @@ export const updateForum = async (req, res) => {
   if (!forum) {
     return res.status(404).json({ msg: "Forum Tidak Ada" });
   }
-  const { namaForum, detail, created_date, icon } = req.body;
+  const { namaForum, detail, icon } = req.body;
   try {
     await Forum.update(
       {
         namaForum: namaForum,
         detail: detail,
-        created_date: created_date,
         icon: icon,
       },
       {

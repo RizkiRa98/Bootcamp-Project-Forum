@@ -11,6 +11,7 @@ import {
 //import middleware verifyUser agar hanya yang sudah login bisa akses
 //import middleware adminOnly agar hanya admin yang bisa akses
 import { verifyUser, adminOnly } from "../middleware/AuthUser.js";
+import { uploadPost } from "../middleware/uploadFotoPost.js";
 
 const PostRoute = express.Router();
 
@@ -18,8 +19,8 @@ const PostRoute = express.Router();
 PostRoute.get("/", getPost);
 PostRoute.get("/forum/:id/post", getPostByForumId);
 PostRoute.get("/forum/:idForum/post/:id", getPostById);
-PostRoute.post("/post", verifyUser, createPost);
-PostRoute.patch("/post/:id", verifyUser, updatePost);
+PostRoute.post("/post", verifyUser, uploadPost, createPost);
+PostRoute.patch("/post/:id", verifyUser, uploadPost, updatePost);
 PostRoute.delete("/post/:id", verifyUser, deletePost);
 
 export default PostRoute;

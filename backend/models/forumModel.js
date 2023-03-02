@@ -31,13 +31,6 @@ const Forum = db.define(
         len: [15, 150],
       },
     },
-    created_date: {
-      type: DataTypes.DATEONLY,
-      allowNull: false,
-      validate: {
-        notEmpty: false,
-      },
-    },
     icon: {
       type: DataTypes.STRING,
       allowNull: false,

@@ -1,8 +1,9 @@
 import Post from "../models/postModel.js";
-import Roles from "../models/rolesModel.js";
 import Users from "../models/userModel.js";
 // Import Operator Dari Sequelize
 import { Op } from "sequelize";
+import multer from "multer";
+import path from "path";
 
 //fungsi get all post
 export const getPost = async (req, res) => {
@@ -10,11 +11,11 @@ export const getPost = async (req, res) => {
     const response = await Post.findAll({
       //Attribut yang ingin ditampilkan
       attributes: [
+        "id",
         "uuid",
         "judulPost",
         "isiPost",
-        "created_date",
-        // "userId",
+        "createdAt",
         "forumId",
         "foto",
       ],
@@ -24,6 +25,7 @@ export const getPost = async (req, res) => {
           attributes: ["userName", "name", "roleId", "gender", "foto"],
         },
       ],
+      order: [["createdAt", "DESC"]],
     });
     res.status(200).json(response);
   } catch (error) {
@@ -40,8 +42,7 @@ export const getPostByForumId = async (req, res) => {
         "uuid",
         "judulPost",
         "isiPost",
-        "created_date",
-        // "userId",
+        "createdAt",
         "forumId",
         "foto",
       ],
@@ -54,6 +55,7 @@ export const getPostByForumId = async (req, res) => {
           attributes: ["userName", "name", "roleId", "gender", "foto"],
         },
       ],
+      order: [["createdAt", "DESC"]],
     });
     res.status(200).json(response);
   } catch (error) {
@@ -67,11 +69,12 @@ export const getPostById = async (req, res) => {
     const response = await Post.findOne({
       //Attribut yang ingin ditampilkan
       attributes: [
+        "id",
         "uuid",
         "judulPost",
         "isiPost",
-        "created_date",
-        // "userId",
+        "createdAt",
+
         "forumId",
         "foto",
       ],
@@ -85,6 +88,7 @@ export const getPostById = async (req, res) => {
           attributes: ["userName", "name", "roleId", "gender", "foto"],
         },
       ],
+      order: [["createdAt", "DESC"]],
     });
     res.status(200).json(response);
   } catch (error) {
@@ -94,16 +98,16 @@ export const getPostById = async (req, res) => {
 
 //fungsi create post
 export const createPost = async (req, res) => {
-  const { judulPost, isiPost, created_date, forumId, foto } = req.body;
+  const { judulPost, isiPost, forumId } = req.body;
   try {
     await Post.create({
       judulPost: judulPost,
       isiPost: isiPost,
-      created_date: created_date,
       forumId: forumId,
-      foto: foto,
+      foto: req.file.path,
       userId: req.userId,
     });
+    // console.log(req.file);
     res.status(201).json({ msg: "Post Berhasil Dibuat" });
   } catch (error) {
     res.status(500).json({ msg: error.message });
@@ -122,12 +126,12 @@ export const updatePost = async (req, res) => {
     if (!post) {
       res.status(404).json({ msg: "Post Tidak Ada" });
     }
-    const { judulPost, isiPost, created_date, forumId, foto } = req.body;
+    const { judulPost, isiPost, forumId, foto } = req.body;
     // Jika yang akses data adalah admin
     // Maka munculkan data
     if (req.roleId === "admin") {
       await Post.update(
-        { judulPost, isiPost, created_date, forumId, foto },
+        { judulPost, isiPost, forumId, foto },
         {
           where: {
             id: post.id,
@@ -135,7 +139,7 @@ export const updatePost = async (req, res) => {
         }
       );
     } else {
-      // JIka yang akses data bukan admin atau bukan user yang post
+      // Jika yang akses data bukan admin atau bukan user yang post
       // Maka akses ditolak
       // Jika yang akses adalah user yang post, maka tampilkan data
       if (req.userId !== post.userId) {
@@ -144,7 +148,7 @@ export const updatePost = async (req, res) => {
         });
       }
       await Post.update(
-        { judulPost, isiPost, created_date, forumId, foto },
+        { judulPost, isiPost, forumId, foto: req.file.path },
         {
           where: {
             [Op.and]: [{ id: post.id }, { userId: req.userId }],
@@ -178,7 +182,7 @@ export const deletePost = async (req, res) => {
         },
       });
     } else {
-      // JIka yang akses data bukan admin atau bukan user yang post
+      // Jika yang akses data bukan admin atau bukan user yang post
       // Maka akses ditolak
       // Jika yang akses adalah user yang post, maka tampilkan data
       if (req.userId !== post.userId) {

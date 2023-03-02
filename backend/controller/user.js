@@ -1,12 +1,22 @@
 import Users from "../models/userModel.js";
 import argon2 from "argon2";
+import validator from "validator";
 
 //fungsi get all User
 export const getUser = async (req, res) => {
   try {
     const response = await Users.findAll({
       //atribut yang ingin di tampilkan
-      attributes: ["uuid", "userName", "name", "email", "roleId", "gender"],
+      attributes: [
+        "uuid",
+        "userName",
+        "name",
+        "email",
+        "roleId",
+        "gender",
+        "foto",
+        "createdAt",
+      ],
     });
     res.status(200).json(response);
   } catch (error) {
@@ -19,7 +29,15 @@ export const getUserById = async (req, res) => {
   try {
     const response = await Users.findOne({
       //atribut yang ingin di tampilkan
-      attributes: ["uuid", "userName", "name", "email", "roleId", "gender"],
+      attributes: [
+        "uuid",
+        "userName",
+        "name",
+        "email",
+        "roleId",
+        "gender",
+        "createdAt",
+      ],
       where: {
         uuid: req.params.id,
       },
@@ -32,17 +50,14 @@ export const getUserById = async (req, res) => {
 
 //fungsi create User
 export const createUser = async (req, res) => {
-  const {
-    username,
-    name,
-    email,
-    password,
-    confPassword,
-    roleId,
-    gender,
-    createDate,
-    foto,
-  } = req.body;
+  const { userName, name, email, password, confPassword, roleId, gender } =
+    req.body;
+
+  if (email) {
+    if (!validator.isEmail(email)) {
+      res.status(400).json({ msg: "Format Email Salah!" });
+    }
+  }
 
   //validasi password dan confirm password
   if (password !== confPassword)
@@ -50,17 +65,19 @@ export const createUser = async (req, res) => {
 
   //jika password dan confirm password sesuai
   const hashPassword = await argon2.hash(password);
+
+  //validasi jika email tidak valid
   try {
     await Users.create({
-      userName: username,
+      userName: userName,
       name: name,
       email: email,
       password: hashPassword,
       roleId: roleId,
       gender: gender,
-      createDate: createDate,
-      foto: foto,
+      foto: req.file.path,
     });
+    console.log(req.file);
     //respon status created
     res.status(201).json({ msg: "Registrasi Berhasil" });
   } catch (error) {
@@ -87,7 +104,6 @@ export const updateUser = async (req, res) => {
     confPassword,
     roleId,
     gender,
-    createDate,
     foto,
   } = req.body;
   // validasi jika user merubah password atau tidak mengisi field password

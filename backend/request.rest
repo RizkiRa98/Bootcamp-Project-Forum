@@ -12,7 +12,6 @@ Content-Type: application/json
 	"gender": "pria",
   "roleId": "admin",
 	"foto": "asdkwkwandawk",
-	"createDate": "2023-02-21"
 }
 
 ###

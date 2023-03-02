@@ -33,13 +33,6 @@ const Post = db.define(
         notEmpty: true,
       },
     },
-    created_date: {
-      type: DataTypes.DATEONLY,
-      allowNull: false,
-      validate: {
-        notEmpty: false,
-      },
-    },
     userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -56,10 +49,7 @@ const Post = db.define(
     },
     foto: {
       type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notEmpty: false,
-      },
+      allowNull: true,
     },
   },
   { freezeTableName: true }

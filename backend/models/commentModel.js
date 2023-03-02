@@ -25,13 +25,6 @@ const Comment = db.define(
         notEmpty: true,
       },
     },
-    created_date: {
-      type: DataTypes.DATEONLY,
-      allowNull: false,
-      validate: {
-        notEmpty: true,
-      },
-    },
     userId: {
       type: DataTypes.INTEGER,
       allowNull: false,

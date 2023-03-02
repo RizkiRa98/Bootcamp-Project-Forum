@@ -39,6 +39,10 @@ const Users = db.define(
         notEmpty: true,
         isEmail: true,
       },
+      unique: {
+        args: true,
+        msg: "Email Sudah Terdaftar! Gunakan Email lain!",
+      },
     },
     password: {
       type: DataTypes.STRING,
@@ -56,13 +60,6 @@ const Users = db.define(
     },
     gender: {
       type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notEmpty: false,
-      },
-    },
-    createDate: {
-      type: DataTypes.DATEONLY,
       allowNull: false,
       validate: {
         notEmpty: false,

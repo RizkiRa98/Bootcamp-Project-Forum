@@ -8,6 +8,7 @@ import {
   BoxContainer,
   FormContainer,
   Input,
+  InputLogin,
   MutedLink,
   SubmitButton,
 } from "./Common";
@@ -42,22 +43,22 @@ export function LoginForm(props) {
 
   return (
     <BoxContainer>
+      {isError && (
+        <div className=" bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+          <strong className=" text-center font-bold text-sm">{message}</strong>{" "}
+        </div>
+      )}
       <FormContainer>
         <form onSubmit={Auth}>
           {/* Login Error handling */}
-          {isError && (
-            <div className=" bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
-              <strong className=" text-center font-bold">{message}</strong>{" "}
-            </div>
-          )}
 
-          <Input
+          <InputLogin
             type="email"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-          <Input
+          <InputLogin
             type="password"
             placeholder="password"
             value={password}
@@ -65,7 +66,7 @@ export function LoginForm(props) {
           />
           <SubmitButton
             type="submit"
-            className="hover:bg-blue-400 focus:ring-4 focus:ring-blue-300 font-medium dark:bg-button"
+            className="transition ease-in-out delay-150 bg-blue-500 hover:-translate-y-1 hover:scale-x-105 hover:bg-indigo-500 duration-300"
           >
             {isLoading ? "Loading..." : "Login"}{" "}
           </SubmitButton>

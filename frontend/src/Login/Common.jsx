@@ -19,7 +19,7 @@ export const MutedLink = styled.a`
   color: rgba(200, 200, 200, 0.8);
   font-weight: 500;
   text-decoration: none;
-  margin-top: 0px;
+  margin-top: 7px;
 `;
 
 export const BoldLink = styled.a`
@@ -36,7 +36,34 @@ export const Input = styled.input`
   border: 1px solid rgba(200, 200, 200, 0.3);
   padding: 0px 10px;
   border-bottom: 1.4px solid transparent;
+
+  box-shadow: 0 0 5px rgba(15, 15, 15, 0.28);
+  font-size: 14px;
+  transition: all 200ms ease-in-out;
+
+  &:: placeholder {
+    color: rgba(200, 200, 200, 1);
+  }
+
+  &:not(:last-of-type) {
+    border-bottom: 1.5px solid rgba(200, 200, 200, 0.4);
+  }
+
+  &: focus {
+    outline: none;
+    border-bottom: 2px solid rgb(112, 126, 255);
+  } ;
+`;
+
+export const InputLogin = styled.input`
+  width: 100%;
+  height: 42px;
+  outline: none;
+  border: 1px solid rgba(200, 200, 200, 0.3);
+  padding: 0px 10px;
+  border-bottom: 1.4px solid transparent;
   margin-top: 10px;
+
   box-shadow: 0 0 5px rgba(15, 15, 15, 0.28);
   font-size: 14px;
   transition: all 200ms ease-in-out;

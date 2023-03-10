@@ -48,7 +48,7 @@ export function FormBox(props) {
   // Context Value
   const ContextValue = { PindahkeSignUp, PindahkeLogin };
   return (
-    <div className="w-full h-screen flex items-start ">
+    <div className="w-full h-screen flex items-start scroll-smooth">
       {/* Left Side */}
       <div className="relative sm:w-1/2 w-0 h-full flex sm:flex-col flex-row xl:visible invisible">
         <div className="absolute top-[22%] left-[10%] flex flex-col bg-slate-600 bg-opacity-50 p-10">

@@ -8,6 +8,8 @@ module.exports = {
         dark: "#363636",
         button: "#707EFF",
         buttonHover: "#5869FF",
+        bounce200: "bounce 1s infinite 200ms",
+        bounce400: "bounce 1s infinite 400ms",
       },
     },
   },

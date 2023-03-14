@@ -3,6 +3,7 @@ import cors from "cors";
 import session from "express-session";
 import dotenv from "dotenv";
 import SequelizeStore from "connect-session-sequelize";
+import cookieParser from "cookie-parser";
 //import sync modal
 import db from "./config/db.js";
 
@@ -17,12 +18,12 @@ dotenv.config();
 
 const app = express();
 
-const sessionStore = SequelizeStore(session.Store);
+// const sessionStore = SequelizeStore(session.Store);
 
 // session ke database
-const store = new sessionStore({
-  db: db,
-});
+// const store = new sessionStore({
+//   db: db,
+// });
 
 // sync database
 // (async () => {
@@ -30,17 +31,17 @@ const store = new sessionStore({
 // })();
 
 //Middleware session untuk tracking pengguna website
-app.use(
-  session({
-    secret: process.env.SESS_SECRET,
-    resave: false,
-    saveUninitialized: true,
-    store: store,
-    cookie: {
-      secure: "auto",
-    },
-  })
-);
+// app.use(
+//   session({
+//     secret: process.env.SESS_SECRET,
+//     resave: false,
+//     saveUninitialized: true,
+//     store: store,
+//     cookie: {
+//       secure: "auto",
+//     },
+//   })
+// );
 
 //middleware untuk akses Front End
 app.use(
@@ -53,8 +54,10 @@ app.use(
 // Static Images Folder
 app.use("/public/Images/user", express.static("./public/Images/user"));
 app.use("/public/Images/post", express.static("./public/Images/post"));
+app.use("/public/Images/forum", express.static("./public/Images/forum"));
 
 //Middleware untuk menerima data dalam bentuk JSON
+app.use(cookieParser());
 app.use(express.json());
 app.use(LoginRoute);
 app.use(UserRoute);

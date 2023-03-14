@@ -33,10 +33,6 @@ const Forum = db.define(
     },
     icon: {
       type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notEmpty: false,
-      },
     },
   },
   { freezeTableName: true }

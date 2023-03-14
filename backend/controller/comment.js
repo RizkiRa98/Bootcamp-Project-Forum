@@ -18,6 +18,10 @@ export const getComment = async (req, res) => {
           model: Users,
           attributes: ["userName", "name", "roleId", "gender", "foto"],
         },
+        {
+          model: Post,
+          attributes: ["uuid", "judulPost", "createdAt"],
+        },
       ],
     });
     res.status(200).json(response);

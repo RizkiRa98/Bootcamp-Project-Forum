@@ -49,7 +49,6 @@ const Post = db.define(
     },
     foto: {
       type: DataTypes.STRING,
-      allowNull: true,
     },
   },
   { freezeTableName: true }

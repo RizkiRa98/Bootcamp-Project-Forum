@@ -4,6 +4,7 @@ import Users from "../models/userModel.js";
 import { Op } from "sequelize";
 import multer from "multer";
 import path from "path";
+import Forum from "../models/forumModel.js";
 
 //fungsi get all post
 export const getPost = async (req, res) => {
@@ -23,6 +24,10 @@ export const getPost = async (req, res) => {
         {
           model: Users,
           attributes: ["userName", "name", "roleId", "gender", "foto"],
+        },
+        {
+          model: Forum,
+          attributes: ["id", "namaForum", "detail"],
         },
       ],
       order: [["createdAt", "DESC"]],
@@ -80,12 +85,16 @@ export const getPostById = async (req, res) => {
       ],
       // cari data berdasarkan judul post sebagai parameter
       where: {
-        [Op.and]: [{ forumId: req.params.idForum }, { uuid: req.params.id }],
+        [Op.and]: [{ forumId: req.params.idForum }, { id: req.params.id }],
       },
       include: [
         {
           model: Users,
           attributes: ["userName", "name", "roleId", "gender", "foto"],
+        },
+        {
+          model: Forum,
+          attributes: ["id", "namaForum", "detail"],
         },
       ],
       order: [["createdAt", "DESC"]],
@@ -98,19 +107,24 @@ export const getPostById = async (req, res) => {
 
 //fungsi create post
 export const createPost = async (req, res) => {
-  const { judulPost, isiPost, forumId } = req.body;
+  const postPhoto = null;
+  if (req.file) {
+    postPhoto = req.file.path;
+  }
+  const { judulPost, isiPost, forumId, userId } = req.body;
+  // console.log(req.body);
   try {
     await Post.create({
       judulPost: judulPost,
       isiPost: isiPost,
       forumId: forumId,
-      foto: req.file.path,
-      userId: req.userId,
+      foto: postPhoto,
+      userId: userId,
     });
     // console.log(req.file);
     res.status(201).json({ msg: "Post Berhasil Dibuat" });
   } catch (error) {
-    res.status(500).json({ msg: error.message });
+    res.status(500).json({ msg: "Gagal Membuat Post" });
   }
 };
 
@@ -126,12 +140,12 @@ export const updatePost = async (req, res) => {
     if (!post) {
       res.status(404).json({ msg: "Post Tidak Ada" });
     }
-    const { judulPost, isiPost, forumId, foto } = req.body;
+    const { judulPost, isiPost, forumId } = req.body;
     // Jika yang akses data adalah admin
     // Maka munculkan data
     if (req.roleId === "admin") {
       await Post.update(
-        { judulPost, isiPost, forumId, foto },
+        { judulPost, isiPost, forumId, foto: req.file.path },
         {
           where: {
             id: post.id,

@@ -1,5 +1,5 @@
 import Users from "../models/userModel.js";
-import argon2 from "argon2";
+import bcrypt from "bcrypt";
 import validator from "validator";
 
 //fungsi get all User
@@ -36,6 +36,7 @@ export const getUserById = async (req, res) => {
         "email",
         "roleId",
         "gender",
+        "foto",
         "createdAt",
       ],
       where: {
@@ -55,18 +56,35 @@ export const createUser = async (req, res) => {
 
   if (email) {
     if (!validator.isEmail(email)) {
-      res.status(400).json({ msg: "Format Email Salah!" });
+      return res.status(400).json({ msg: "Format Email Salah!" });
     }
+  }
+
+  // Validai email jika sudah digunakan
+  const cekEmail = await Users.findOne({
+    where: {
+      email: email,
+    },
+  });
+  if (cekEmail) {
+    return res.status(400).json({ msg: "Email Sudah Digunakan" });
   }
 
   //validasi password dan confirm password
   if (password !== confPassword)
-    res.status(400).json({ msg: "Password dan Confirm Password Tidak Cocok" });
+    return res
+      .status(400)
+      .json({ msg: "Password dan Confirm Password Tidak Cocok" });
 
   //jika password dan confirm password sesuai
-  const hashPassword = await argon2.hash(password);
-
-  //validasi jika email tidak valid
+  const salt = await bcrypt.genSalt();
+  const hashPassword = await bcrypt.hash(password, salt);
+  let userPhoto = null;
+  if (req.file) {
+    userPhoto = req.file.path;
+  } else {
+    userPhoto = "./public/default_photo.jpg";
+  }
   try {
     await Users.create({
       userName: userName,
@@ -75,11 +93,10 @@ export const createUser = async (req, res) => {
       password: hashPassword,
       roleId: roleId,
       gender: gender,
-      foto: req.file.path,
+      foto: userPhoto,
     });
-    console.log(req.file);
     //respon status created
-    res.status(201).json({ msg: "Registrasi Berhasil" });
+    res.status(200).json({ msg: "Registrasi Berhasil" });
   } catch (error) {
     res.status(400).json({ msg: error.message });
   }
@@ -96,22 +113,14 @@ export const updateUser = async (req, res) => {
   if (!user) {
     return res.status(404).json({ msg: "User Tidak Ada" });
   }
-  const {
-    username,
-    name,
-    email,
-    password,
-    confPassword,
-    roleId,
-    gender,
-    foto,
-  } = req.body;
+  const { username, name, email, password, confPassword, roleId, gender } =
+    req.body;
   // validasi jika user merubah password atau tidak mengisi field password
   let hashPassword;
-  if (password === "" || password === null) {
-    hashPassword = user.password;
-  } else {
+  if (typeof password !== "undefined" && password !== null && password !== "") {
     hashPassword = await argon2.hash(password);
+  } else {
+    hashPassword = user.password;
   }
   //validasi password dan confirm password
   if (password !== confPassword)
@@ -127,8 +136,7 @@ export const updateUser = async (req, res) => {
         password: hashPassword,
         roleId: roleId,
         gender: gender,
-        createDate: createDate,
-        foto: foto,
+        foto: req.file.path,
       },
       {
         where: { uuid: user.uuid },

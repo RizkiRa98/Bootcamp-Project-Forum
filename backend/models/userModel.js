@@ -67,7 +67,9 @@ const Users = db.define(
     },
     foto: {
       type: DataTypes.STRING,
-      allowNull: true,
+    },
+    refresh_token: {
+      type: DataTypes.TEXT,
     },
   },
   { freezeTableName: true }

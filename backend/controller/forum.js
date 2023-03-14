@@ -5,7 +5,8 @@ export const getForum = async (req, res) => {
   try {
     const response = await Forum.findAll({
       //Atribut yang ingin ditampilkan
-      attributes: ["id", "uuid", "namaForum", "detail", "createdAt", "icon"],
+      attributes: ["id", "uuid", "namaForum", "detail", "icon", "createdAt"],
+      order: [["createdAt", "ASC"]],
     });
     res.status(200).json(response);
   } catch (error) {
@@ -14,13 +15,13 @@ export const getForum = async (req, res) => {
 };
 
 //fungsi get forum by id
-export const getForumByName = async (req, res) => {
+export const getForumById = async (req, res) => {
   try {
     const response = await Forum.findOne({
       //Atribut yang ingin ditampilkan
-      attributes: ["uuid", "namaForum", "detail", "createdAt", "icon"],
+      attributes: ["id", "uuid", "namaForum", "detail", "createdAt", "icon"],
       where: {
-        namaForum: req.params.id,
+        id: req.params.id,
       },
     });
     res.status(200).json(response);
@@ -31,12 +32,18 @@ export const getForumByName = async (req, res) => {
 
 //fungsi create forum
 export const createForum = async (req, res) => {
-  const { namaForum, detailt, icon } = req.body;
+  let iconForum = null;
+  if (req.file) {
+    iconForum = req.file.path;
+  } else {
+    iconForum = "./public/default_icon.png";
+  }
+  const { namaForum, detail } = req.body;
   try {
     await Forum.create({
       namaForum: namaForum,
       detail: detail,
-      icon: icon,
+      icon: iconForum,
     });
     res.status(201).json({ msg: "Forum Berhasil Dibuat" });
   } catch (error) {
@@ -48,7 +55,7 @@ export const createForum = async (req, res) => {
 export const updateForum = async (req, res) => {
   const forum = await Forum.findOne({
     where: {
-      uuid: req.params.id,
+      id: req.params.id,
     },
   });
   //Validasi jika forum tidak ditemukan
@@ -61,7 +68,7 @@ export const updateForum = async (req, res) => {
       {
         namaForum: namaForum,
         detail: detail,
-        icon: icon,
+        icon: req.file.path,
       },
       {
         where: { uuid: forum.uuid },

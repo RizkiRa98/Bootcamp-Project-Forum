@@ -26,7 +26,19 @@ export default function Navbar() {
   const [email, setEmail] = useState("");
   const [token, setToken] = useState("");
   const [login, setLogin] = useState(false);
+  const [forum, setForum] = useState([]);
   const navigate = useNavigate();
+
+  // Fetch data forum dari API
+  const getForum = async () => {
+    const response = await axios.get("http://localhost:5000/forum");
+    setForum(response.data);
+  };
+
+  // Call method getForum pada useEffect
+  useEffect(() => {
+    getForum();
+  }, []);
 
   // Decode jwt token
   const refrehToken = async () => {
@@ -69,7 +81,7 @@ export default function Navbar() {
 
   // const [isOpen, setOpen] = useState(false);
   return (
-    <div className="sticky top-0 z-50">
+    <div className="fixed top-0 z-20 w-full">
       <Disclosure as="nav" className="bg-white drop-shadow-xl ">
         {({ open }) => (
           <>
@@ -133,7 +145,7 @@ export default function Navbar() {
                         ) : (
                           <>
                             <a
-                              href="login"
+                              href="/login"
                               className="text-white bg-button hover:bg-blue-400 focus:ring-4 focus:ring-blue-300 font-medium rounded-2xl text-xl h-9 py-1 mr-3 w-36 dark:bg-button  dark:hover:bg-buttonHover focus:outline-none dark:focus:ring-buttonHover text-center"
                             >
                               Login
@@ -240,7 +252,7 @@ export default function Navbar() {
               </div>
             </div>
 
-            <Disclosure.Panel className="md:hidden">
+            <Disclosure.Panel className="md:hidden overflow-y-auto">
               <div className="flex space-y-1 px-2 pt-2 pb-3">
                 <div className="flex justify-center justify-items-center m-auto">
                   {!loading ? (
@@ -250,7 +262,7 @@ export default function Navbar() {
                       ) : (
                         <>
                           <a
-                            href="login"
+                            href="/login"
                             className="text-white bg-button hover:bg-blue-400 focus:ring-4 focus:ring-blue-300 font-medium rounded-2xl text-xl h-9 py-1 mr-3 w-36 dark:bg-button  dark:hover:bg-buttonHover focus:outline-none dark:focus:ring-buttonHover text-center"
                           >
                             Login
@@ -300,48 +312,25 @@ export default function Navbar() {
               <span className="text-sm text-gray-500 ml-2">Forum</span>
               <ul
                 role="list"
-                className=" font-medium text-gray-900 text-lg ml-2"
+                className="font-medium text-gray-900 text-lg ml-2"
               >
-                {/* Desktop Setup link */}
-                <li className="mt-3 mb-3">
-                  <a
-                    href="/forum/:id"
-                    className="inline-flex items-center justify-start pt-2 pb-2 w-full text-lg font-medium text-gray-700 rounded-lg bg-gray-50 hover:text-gray-900 hover:bg-buttonHover dark:hover:bg-gray-400 dark:hover:text-white transition-colors duration-300"
-                  >
-                    <AiOutlineDesktop className="w-7 h-7 mr-3" />
-                    Desktop Setup
-                  </a>
-                </li>
-                {/* PC Building Link */}
-                <li className="mt-3 mb-3">
-                  <a
-                    href="/forum/:id"
-                    className="inline-flex items-center justify-start pt-2 pb-2 w-full text-lg font-medium text-gray-700 rounded-lg bg-gray-50 hover:text-gray-900 hover:bg-buttonHover dark:hover:bg-gray-400 dark:hover:text-white transition-colors duration-300"
-                  >
-                    <VscTools className="w-7 h-7 mr-3" />
-                    PC Building
-                  </a>
-                </li>
-                {/* PC Building Link */}
-                <li className="mt-3 mb-3">
-                  <a
-                    href="/forum/:id"
-                    className="inline-flex items-center justify-start pt-2 pb-2 w-full text-lg font-medium text-gray-700 rounded-lg bg-gray-50 hover:text-gray-900 hover:bg-buttonHover dark:hover:bg-gray-400 dark:hover:text-white transition-colors duration-300"
-                  >
-                    <AiOutlineExclamationCircle className="w-7 h-7 mr-3" />
-                    Troubleshooting
-                  </a>
-                </li>
-                {/* Accessories Link */}
-                <li className="mt-3 mb-3">
-                  <a
-                    href="/forum/:id"
-                    className="inline-flex items-center justify-start pt-2 pb-2 w-full text-lg font-medium text-gray-700 rounded-lg bg-gray-50 hover:text-gray-900 hover:bg-buttonHover dark:hover:bg-gray-400 dark:hover:text-white transition-colors duration-300"
-                  >
-                    <FaHeadset className="w-7 h-7 mr-3" />
-                    Accessories
-                  </a>
-                </li>
+                {/* Get Forum*/}
+                {forum.map((forum, index) => (
+                  <li className="mt-3 mb-3" key={forum.id}>
+                    <a
+                      href={`/forum/${forum.id}`}
+                      className="inline-flex items-center justify-start pt-2 pb-2 w-full lg:text-base text-lg font-medium text-gray-700 rounded-lg bg-gray-50 hover:text-gray-900 hover:bg-buttonHover dark:hover:bg-buttonHover dark:hover:text-white transition-colors duration-300"
+                    >
+                      <img
+                        className="w-7 h-7 mr-3"
+                        src={`http://localhost:5000/${forum.icon}`}
+                        alt="Icon Forum"
+                      />
+
+                      {forum.namaForum}
+                    </a>
+                  </li>
+                ))}
               </ul>
             </Disclosure.Panel>
           </>

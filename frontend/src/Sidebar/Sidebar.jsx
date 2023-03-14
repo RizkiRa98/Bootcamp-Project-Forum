@@ -1,22 +1,14 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { IoCreateOutline } from "react-icons/io5";
-import {
-  AiOutlineHome,
-  AiOutlineFire,
-  AiOutlineDesktop,
-  AiOutlineExclamationCircle,
-} from "react-icons/ai";
-
-import { FaHeadset } from "react-icons/fa";
-import { VscTools } from "react-icons/vsc";
+import { AiOutlineHome, AiOutlineFire } from "react-icons/ai";
 import axios from "axios";
-import jwt_decode from "jwt-decode";
 
 export default function Sidebar({ setShowModal }) {
   // Method create post, hanya untuk yang sudah login saja
   const [token, setToken] = useState("");
   const [login, setLogin] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [forum, setForum] = useState([]);
 
   // Decode jwt token
   const refrehToken = async () => {
@@ -26,7 +18,9 @@ export default function Sidebar({ setShowModal }) {
         setLoading(false);
         setLogin(true);
       });
-    } catch (error) {}
+    } catch (error) {
+      setLoading(false);
+    }
   };
 
   // Memanggil fungsi refresh token menggunakan Use Effect
@@ -34,13 +28,19 @@ export default function Sidebar({ setShowModal }) {
     refrehToken();
   }, []);
 
-  // Memanggil fungsi refresh token menggunakan Use Effect
+  // Fetch data forum dari API
+  const getForum = async () => {
+    const response = await axios.get("http://localhost:5000/forum");
+    setForum(response.data);
+  };
+
+  // Call method getForum pada useEffect
   useEffect(() => {
-    refrehToken();
+    getForum();
   }, []);
 
   return (
-    <div className="bg-white  flex justify-end mx-auto fixed left-0 top-20 invisible md:visible rounded-xl shadow-lg h-auto drop-shadow-xl lg:ml-6 xl:w-80 w-56">
+    <div className="bg-white  flex justify-end mx-auto fixed left-0 top-20 invisible md:visible rounded-xl shadow-lg h-auto drop-shadow-xl lg:ml-6 xl:w-80 w-56 z-10">
       <div className="container">
         <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col justify-center">
@@ -119,46 +119,23 @@ export default function Sidebar({ setShowModal }) {
             {/* Forum */}
             <span className="text-sm text-gray-500">Forum</span>
             <ul role="list" className=" font-medium text-gray-900 text-lg">
-              {/* Desktop Setup link */}
-              <li className="mt-3 mb-3">
-                <a
-                  href="/forum/:id"
-                  className="inline-flex items-center justify-start pt-2 pb-2 w-full lg:text-base text-sm font-medium text-gray-700 rounded-lg bg-gray-50 hover:text-gray-900 hover:bg-buttonHover dark:hover:bg-buttonHover dark:hover:text-white transition-colors duration-300"
-                >
-                  <AiOutlineDesktop className="w-7 h-7 mr-3" />
-                  Desktop Setup
-                </a>
-              </li>
-              {/* PC Building Link */}
-              <li className="mt-3 mb-3">
-                <a
-                  href="/forum/:id"
-                  className="inline-flex items-center justify-start pt-2 pb-2 w-full lg:text-base text-sm font-medium text-gray-700 rounded-lg bg-gray-50 hover:text-gray-900 hover:bg-buttonHover dark:hover:bg-buttonHover dark:hover:text-white transition-colors duration-300"
-                >
-                  <VscTools className="w-7 h-7 mr-3" />
-                  PC Building
-                </a>
-              </li>
-              {/* PC Building Link */}
-              <li className="mt-3 mb-3">
-                <a
-                  href="/forum/:id"
-                  className="inline-flex items-center justify-start pt-2 pb-2 w-full lg:text-base text-sm font-medium text-gray-700 rounded-lg bg-gray-50 hover:text-gray-900 hover:bg-buttonHover dark:hover:bg-buttonHover dark:hover:text-white transition-colors duration-300"
-                >
-                  <AiOutlineExclamationCircle className="w-7 h-7 mr-3" />
-                  Troubleshooting
-                </a>
-              </li>
-              {/* Accessories Link */}
-              <li className="mt-3 mb-3">
-                <a
-                  href="/forum/:id"
-                  className="inline-flex items-center justify-start pt-2 pb-2 w-full lg:text-base text-sm font-medium text-gray-700 rounded-lg bg-gray-50 hover:text-gray-900 hover:bg-buttonHover dark:hover:bg-buttonHover dark:hover:text-white transition-colors duration-300"
-                >
-                  <FaHeadset className="w-6 h-6 mr-3" />
-                  Accessories
-                </a>
-              </li>
+              {/* Get Forum*/}
+              {forum.map((forum, index) => (
+                <li className="mt-3 mb-3" key={forum.id}>
+                  <a
+                    href={`/forum/${forum.id}`}
+                    className="inline-flex items-center justify-start pt-2 pb-2 w-full lg:text-base text-sm font-medium text-gray-700 rounded-lg bg-gray-50 hover:text-gray-900 hover:bg-buttonHover dark:hover:bg-buttonHover dark:hover:text-white transition-colors duration-300"
+                  >
+                    <img
+                      className="w-7 h-7 mr-3"
+                      src={`http://localhost:5000/${forum.icon}`}
+                      alt="Icon Forum"
+                    />
+
+                    {forum.namaForum}
+                  </a>
+                </li>
+              ))}
             </ul>
             <div className="lg:col-span-12"></div>
           </div>

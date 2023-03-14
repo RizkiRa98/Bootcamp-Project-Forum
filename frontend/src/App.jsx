@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./Home";
 import Login from "./Login/";
-import SignUp from "./SignUp/SignUp";
+import ContentPost from "./Content/ContentPost";
 
 function App() {
   return (
@@ -9,7 +9,11 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="login" element={<Login />}></Route>
+          <Route path="/login" element={<Login />}></Route>
+          <Route
+            path="forum/:idForum/post/:id"
+            element={<ContentPost />}
+          ></Route>
           {/* <Route path="createUser" element={<SignUp />}></Route> */}
         </Routes>
       </BrowserRouter>

@@ -5,7 +5,7 @@ import { FaHeart, FaComment } from "react-icons/fa";
 
 export default function LikeReply() {
   return (
-    <div className="flex items-center ml-12 mt-2">
+    <div className=" flex items-center ml-12 mt-2">
       <div className="flex flex-row ml-3 w-9/12">
         {/* Like */}
         <div className="text-lg font-semibold flex justify-items-center">

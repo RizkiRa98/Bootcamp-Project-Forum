@@ -1,7 +1,11 @@
 /** @type {import('tailwindcss').Config} */
+
 module.exports = {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
+    minHeight: {
+      mheight: "120px",
+    },
     extend: {
       colors: {
         white: "#F9F9F9",
